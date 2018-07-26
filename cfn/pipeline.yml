@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Continuous Delivery CodePipeline that automatically builds and tests an AMI built by Packer
+Parameters:
+  GitHubToken:
+    Type: String
+    NoEcho: true
+  GitHubUser:
+    Type: String
+    Default: stelligent
+  GitHubRepoName:
+    Type: String
+  GitHubBranchName:
+    Type: String
+    Default: master
+Resources:
+  PipelineBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "ami-pipeline-bucket"
+      VersioningConfiguration:
+        Status: "Enabled"
+  PipelineBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PipelineBucket
+      PolicyDocument:
+        Statement: 
+        - 
+          Action: 
+            - "s3:ListBucket"
+            - "s3:Get*"
+            - "s3:PutObject"
+          Effect: "Allow"
+          Resource: 
+            - !Sub "arn:aws:s3:::${PipelineBucket}"
+            - !Sub "arn:aws:s3:::${PipelineBucket}/*"
+          Principal: 
+            - !Ref CodePipelineRole
+            - !Ref CodeBuildRole
+  CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codepipeline.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          PolicyName: codepipeline-service
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - "codebuild:*"
+                Resource: "*"
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: codebuild.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+        -
+          PolicyName: packer-ami-codebuild
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: Allow
+                Action:
+                  - "ssm:*"
+                  - "ec2:*"
+                  - "codepipeline:PutJobSuccessResult"
+                  - "codepipeline:PutJobFailureResult"
+                Resource: "*"
+              -
+                Action:
+                  - "logs:*"
+                Effect: Allow
+                Resource: "arn:aws:logs:*:*:*"
+  ValidateTemplateProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Description: Codebuild project Validate Packer Template
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+      Source:
+        BuildSpec: buildspec/validate_template.yml
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
+  AMIPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Location: !Ref PipelineBucket
+        Type: S3
+      RoleArn: !GetAtt [CodePipelineRole, Arn]
+      Stages:
+        - Name: Commit
+          Actions:
+          - Name: Commit
+            ActionTypeId:
+              Category: Source
+              Owner: ThirdParty
+              Provider: GitHub
+              Version: 1
+            OutputArtifacts:
+              - Name: AMIProject
+            Configuration:
+              Owner: !Ref GitHubUser
+              Repo: !Ref GitHubRepoName
+              Branch: !Ref GitHubBranchName
+              OAuthToken: !Ref GitHubToken
+        - Name: Build
+          Actions:
+            - Name: ValidateTemplate
+              RunOrder: 1
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref ValidateTemplateProject
+              InputArtifacts:
+                - Name: AMIProject
+            - Name: PackerBuild
+              RunOrder: 2
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref PackerBuildProject
+              InputArtifacts:
+                - Name: AMIProject
+              OutputArtifacts:
+                - Name: AMIProjectAMIID
+        - Name: Test
+          Actions:
+            - Name: TestAMI
+              RunOrder: 1
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref TestAMIProject
+              InputArtifacts:
+                - Name: AMIProjectAMIID
+        - Name: Publish
+          Actions:
+            - Name: PublishAMI
+              RunOrder: 1
+              ActionTypeId:
+                Category: Publish
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref PublishAMIProject
+              InputArtifacts:
+                - Name: AMIProjectAMIID
