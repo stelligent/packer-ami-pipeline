@@ -31,10 +31,6 @@
 
   "provisioners": [
     {
-      "type": "shell",
-      "inline": ["berks vendor ./cookbooks"]
-    },
-    {
       "type": "chef-solo",
       "cookbook_paths": [
         "cookbooks"
