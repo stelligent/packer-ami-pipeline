@@ -34,9 +34,10 @@ Resources:
           Resource: 
             - !Sub "arn:aws:s3:::${PipelineBucket}"
             - !Sub "arn:aws:s3:::${PipelineBucket}/*"
-          Principal: 
-            - !Ref CodePipelineRole
-            - !Ref CodeBuildRole
+          Principal:
+            AWS:
+              - !GetAtt CodePipelineRole.Arn
+              - !GetAtt CodeBuildRole.Arn
   CodePipelineRole:
     Type: AWS::IAM::Role
     Properties:
@@ -140,42 +141,42 @@ Resources:
                 ProjectName: !Ref ValidateTemplateProject
               InputArtifacts:
                 - Name: AMIProject
-            - Name: PackerBuild
-              RunOrder: 2
-              ActionTypeId:
-                Category: Build
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref PackerBuildProject
-              InputArtifacts:
-                - Name: AMIProject
-              OutputArtifacts:
-                - Name: AMIProjectAMIID
-        - Name: Test
-          Actions:
-            - Name: TestAMI
-              RunOrder: 1
-              ActionTypeId:
-                Category: Test
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref TestAMIProject
-              InputArtifacts:
-                - Name: AMIProjectAMIID
-        - Name: Publish
-          Actions:
-            - Name: PublishAMI
-              RunOrder: 1
-              ActionTypeId:
-                Category: Publish
-                Owner: AWS
-                Version: 1
-                Provider: CodeBuild
-              Configuration:
-                ProjectName: !Ref PublishAMIProject
-              InputArtifacts:
-                - Name: AMIProjectAMIID
+        #     - Name: PackerBuild
+        #       RunOrder: 2
+        #       ActionTypeId:
+        #         Category: Build
+        #         Owner: AWS
+        #         Version: 1
+        #         Provider: CodeBuild
+        #       Configuration:
+        #         ProjectName: !Ref PackerBuildProject
+        #       InputArtifacts:
+        #         - Name: AMIProject
+        #       OutputArtifacts:
+        #         - Name: AMIProjectAMIID
+        # - Name: Test
+        #   Actions:
+        #     - Name: TestAMI
+        #       RunOrder: 1
+        #       ActionTypeId:
+        #         Category: Test
+        #         Owner: AWS
+        #         Version: 1
+        #         Provider: CodeBuild
+        #       Configuration:
+        #         ProjectName: !Ref TestAMIProject
+        #       InputArtifacts:
+        #         - Name: AMIProjectAMIID
+        # - Name: Publish
+        #   Actions:
+        #     - Name: PublishAMI
+        #       RunOrder: 1
+        #       ActionTypeId:
+        #         Category: Publish
+        #         Owner: AWS
+        #         Version: 1
+        #         Provider: CodeBuild
+        #       Configuration:
+        #         ProjectName: !Ref PublishAMIProject
+        #       InputArtifacts:
+        #         - Name: AMIProjectAMIID

@@ -1,0 +1,40 @@
+{
+  "variables": {
+    "region": "",
+    "source_ami": "",
+    "vpc_id": "",
+    "subnet_id": "",
+    "kms_key_id": "",
+    "git_hash": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "{{user `region`}}",
+      "source_ami": "{{user `source_ami`}}",
+      "instance_type": "t2.micro",
+      "ssh_username": "ec2-user",
+      "ami_name": "AMZN-Linux-NGINX-{{timestamp}}",
+      "ami_description": "Simple Amazon Linux instance with NGINX installed",
+      "vpc_id": "{{user `vpc_id`}}",
+      "subnet_id": "{{user `subnet_id`}}",
+      "associate_public_ip_address": true,
+      "ebs_optimized": true,
+      "ssh_interface": "public_ip",
+      "shutdown_behavior": "terminate",
+      "tags": {
+        "Name": "AMZN-Linux-NGINX-{{timestamp}}",
+        "GIT_HASH": "{{user `git_hash`}}"
+      }
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "chef-solo",
+      "cookbook_paths": [
+        "cookbooks"
+      ]
+    }
+  ]
+}

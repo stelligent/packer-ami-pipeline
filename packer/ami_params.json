@@ -1,0 +1,6 @@
+{
+  "region": "us-east-1",
+  "source_ami": "ami-b70554c8",
+  "vpc_id": "vpc-da3c10bc",
+  "subnet_id": "subnet-20dd502f"
+}
