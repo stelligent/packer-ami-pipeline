@@ -7,6 +7,7 @@
     "kms_key_id": "",
     "git_hash": ""
   },
+  
   "builders": [
     {
       "type": "amazon-ebs",
@@ -40,6 +41,14 @@
       ],
       "prevent_sudo": false,
       "skip_install": false
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
     }
   ]
 }

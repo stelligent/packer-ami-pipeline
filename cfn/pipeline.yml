@@ -105,6 +105,21 @@ Resources:
         BuildSpec: buildspec/validate_template.yml
         Type: CODEPIPELINE
       TimeoutInMinutes: 30
+  PackerBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Description: Codebuild project Build AMI
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+      Source:
+        BuildSpec: buildspec/packer_build.yml
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
   AMIPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -141,19 +156,19 @@ Resources:
                 ProjectName: !Ref ValidateTemplateProject
               InputArtifacts:
                 - Name: AMIProject
-        #     - Name: PackerBuild
-        #       RunOrder: 2
-        #       ActionTypeId:
-        #         Category: Build
-        #         Owner: AWS
-        #         Version: 1
-        #         Provider: CodeBuild
-        #       Configuration:
-        #         ProjectName: !Ref PackerBuildProject
-        #       InputArtifacts:
-        #         - Name: AMIProject
-        #       OutputArtifacts:
-        #         - Name: AMIProjectAMIID
+            - Name: PackerBuild
+              RunOrder: 2
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref PackerBuildProject
+              InputArtifacts:
+                - Name: AMIProject
+              OutputArtifacts:
+                - Name: AMIProjectAMIID
         # - Name: Test
         #   Actions:
         #     - Name: TestAMI

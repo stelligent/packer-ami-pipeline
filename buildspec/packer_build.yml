@@ -9,4 +9,4 @@ phases:
   build:
     commands:
       - echo Building AMI
-      - packer build -var-file=packer/ami_params.json packer/ami.json
+      - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_SOURCE_VERSION} packer/ami.json
