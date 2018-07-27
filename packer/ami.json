@@ -33,7 +33,7 @@
     {
       "type": "chef-solo",
       "cookbook_paths": [
-        "../cookbooks"
+        "cookbooks"
       ],
       "run_list": [
         "nginx::default"
