@@ -1,0 +1,20 @@
+DEPENDENCIES
+  nginx (~> 8.1.5)
+
+GRAPH
+  build-essential (8.1.1)
+    mingw (>= 1.1)
+    seven_zip (>= 0.0.0)
+  mingw (2.1.0)
+    seven_zip (>= 0.0.0)
+  nginx (8.1.5)
+    build-essential (>= 5.0)
+    ohai (>= 4.1.0)
+    yum-epel (>= 0.0.0)
+    zypper (>= 0.0.0)
+  ohai (5.2.3)
+  seven_zip (3.0.0)
+    windows (>= 0.0.0)
+  windows (5.0.0)
+  yum-epel (3.2.0)
+  zypper (0.4.0)
