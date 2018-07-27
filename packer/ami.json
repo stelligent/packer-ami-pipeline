@@ -7,7 +7,7 @@
     "kms_key_id": "",
     "git_hash": ""
   },
-  
+
   "builders": [
     {
       "type": "amazon-ebs",
@@ -20,7 +20,6 @@
       "vpc_id": "{{user `vpc_id`}}",
       "subnet_id": "{{user `subnet_id`}}",
       "associate_public_ip_address": true,
-      "ebs_optimized": true,
       "ssh_interface": "public_ip",
       "shutdown_behavior": "terminate",
       "tags": {
