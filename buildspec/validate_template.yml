@@ -9,4 +9,4 @@ phases:
   build:
     commands:
       - echo Validating Packer Template
-      - packer validate packer/ami.json
+      - packer validate -var-file=packer/ami_params.json packer/ami.json
