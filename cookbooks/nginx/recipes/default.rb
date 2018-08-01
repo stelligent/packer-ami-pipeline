@@ -1,4 +1,13 @@
-yum_package 'epel-release' do
+remote_file "/tmp/epel-release-latest-7.noarch.rpm" do
+    source "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+    owner 'root'
+    group 'root'
+    mode 0755
+end
+
+package 'epel-release' do
+    source "/tmp/epel-release-latest-7.noarch.rpm"
+    action :install
 end
 
 package 'nginx' do
