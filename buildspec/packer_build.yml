@@ -17,6 +17,6 @@ phases:
       - echo Building AMI
       - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_SOURCE_VERSION} packer/ami.json
 
-  artifacts:
-    files:
-      - "**/*"
+artifacts:
+  files:
+    - "**/*"
