@@ -5,7 +5,7 @@ phases:
     commands:
       - echo Installing pre-reqs
       - apt-get -y update
-      - apt-get -y install build-essential ruby-dev git curl build-essential libxml2-dev libxslt-dev libssl-dev autoconf
+      - apt-get -y install build-essential ruby-dev git curl build-essential libxml2-dev libxslt-dev libssl-dev autoconf jq
       - curl -L https://www.opscode.com/chef/install.sh | bash
       - /opt/chef/embedded/bin/gem install berkshelf --no-ri --no-rdoc
       - ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
@@ -16,6 +16,12 @@ phases:
     commands:
       - echo Building AMI
       - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_SOURCE_VERSION} packer/ami.json
+      - echo Creating Test Instance Configuration
+      - ARTIFACT_ID=$(cat manifest.json | jq '.builds[0].artifact_id')
+      - IFS=: read REGION AMI_ID <<< $(sed -e 's/^"//' -e 's/"$//' <<< $ARTIFACT_ID)
+      - $DATE=$(date '+%s')
+      - aws ec2 create-key-pair --key-name test-instance-key-${DATE} --query 'KeyMaterial' --output text > test-instance-key-${DATE}.pem
+      - echo "{\"AmiId\": \"${AMI_ID}\", \"KeyName\": \"test-instance-key-${DATE}\"}" >> test/test-instance-config.json
 
 artifacts:
   files:
