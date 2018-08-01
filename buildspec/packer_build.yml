@@ -17,11 +17,7 @@ phases:
       - echo Building AMI
       - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_SOURCE_VERSION} packer/ami.json
       - echo Creating Test Instance Configuration
-      - ARTIFACT_ID=$(cat manifest.json | jq '.builds[0].artifact_id')
-      - IFS=: read REGION AMI_ID <<< $(sed -e 's/^"//' -e 's/"$//' <<< $ARTIFACT_ID)
-      - $DATE=$(date '+%s')
-      - aws ec2 create-key-pair --key-name test-instance-key-$DATE --query "KeyMaterial" --output text > test-instance-key-$DATE.pem
-      - 'echo "{\"AmiId\": \"${AMI_ID}\", \"KeyName\": \"test-instance-key-${DATE}\"}" >> test/test-instance-config.json'
+      - ./buildscripts/generate_instance_config.sh
 
 artifacts:
   files:
