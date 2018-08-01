@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Continuous Delivery CodePipeline that automatically builds and tests an AMI built by Packer
+Parameters:
+  AmiId:
+    Type: String
+    Description: AMI ID to build instance from
+  VpcId:
+    Type: String
+    Description: VPC to launch instance in
+    Default: vpc-da3c10bc
+  SubnetId:
+    Type: String
+    Description: Subnet to launch instance in
+    Default: subnet-20dd502f
+  KeyName:
+    Type: String
+    Description: SSH Keypair Name
+Resources:
+  TestSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group opening SSH and HTTP to Test Instance"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - 
+          CidrIp: 0.0.0.0/0
+          FromPort: 80
+          ToPort: 80
+          IpProtocol: TCP
+        -
+          CidrIp: 0.0.0.0/0
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: TCP
+  TestInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      SubnetId: !Ref SubnetId
+      SecurityGroupIds:
+        - !Ref TestSecurityGroup
+      ImageId: !Ref AmiId
+      InstanceType: t2.micro
+      KeyName: !Ref KeyName
+      Tags:
+        -
+          Key: Name
+          Value: AMIPipelineTestInstance
+Outputs:
+  TestInstanceId:
+    Value: !Ref TestInstance
+  TestInstanceIPAddress:
+    Value: !GetAtt TestInstance.PublicIp

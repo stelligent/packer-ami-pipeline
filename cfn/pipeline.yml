@@ -59,6 +59,8 @@ Resources:
                 Effect: Allow
                 Action:
                   - "codebuild:*"
+                  - "cloudformation:*"
+                  - "ec2:*"
                 Resource: "*"
   CodeBuildRole:
     Type: AWS::IAM::Role
@@ -186,8 +188,26 @@ Resources:
                 - Name: AMIProjectAMIID
         - Name: Test
           Actions:
-            - Name: TestAMI
+            - Name: BuildTestInstance
               RunOrder: 1
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: "CREATE_UPDATE"
+                StackName: "AMIPipelineTestInstance"
+                TemplatePath: "AMIProjectAMIID::test/test-instance.yml"
+                TemplateConfiguration: "AMIProjectAMIID::test/test-instance-conf.json"
+                RoleArn: !GetAtt AMIPipelineServiceRole.Arn
+                OutputFileName: "TestInstanceOutput.json"
+              InputArtifacts:
+                - Name: AMIProjectAMIID
+              OutputArtifacts:
+                - Name: AMIProjectInstanceOutput
+            - Name: TestAMI
+              RunOrder: 2
               ActionTypeId:
                 Category: Test
                 Owner: AWS
@@ -196,7 +216,7 @@ Resources:
               Configuration:
                 ProjectName: !Ref TestAMIProject
               InputArtifacts:
-                - Name: AMIProjectAMIID
+                - Name: AMIProjectInstanceOutput
         # - Name: Publish
         #   Actions:
         #     - Name: PublishAMI
