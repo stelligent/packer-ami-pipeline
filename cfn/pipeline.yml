@@ -191,7 +191,7 @@ Resources:
             - Name: BuildTestInstance
               RunOrder: 1
               ActionTypeId:
-                Category: Test
+                Category: Deploy
                 Owner: AWS
                 Version: 1
                 Provider: CloudFormation
@@ -200,7 +200,7 @@ Resources:
                 StackName: "AMIPipelineTestInstance"
                 TemplatePath: "AMIProjectAMIID::test/test-instance.yml"
                 TemplateConfiguration: "AMIProjectAMIID::test/test-instance-conf.json"
-                RoleArn: !GetAtt AMIPipelineServiceRole.Arn
+                RoleArn: !GetAtt CodePipelineRole.Arn
                 OutputFileName: "TestInstanceOutput.json"
               InputArtifacts:
                 - Name: AMIProjectAMIID
