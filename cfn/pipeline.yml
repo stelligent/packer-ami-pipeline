@@ -120,6 +120,21 @@ Resources:
         BuildSpec: buildspec/packer_build.yml
         Type: CODEPIPELINE
       TimeoutInMinutes: 30
+  TestAMIProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Description: Codebuild project Test AMI
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+      Source:
+        BuildSpec: buildspec/test_ami.yml
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
   AMIPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -169,19 +184,19 @@ Resources:
                 - Name: AMIProject
               OutputArtifacts:
                 - Name: AMIProjectAMIID
-        # - Name: Test
-        #   Actions:
-        #     - Name: TestAMI
-        #       RunOrder: 1
-        #       ActionTypeId:
-        #         Category: Test
-        #         Owner: AWS
-        #         Version: 1
-        #         Provider: CodeBuild
-        #       Configuration:
-        #         ProjectName: !Ref TestAMIProject
-        #       InputArtifacts:
-        #         - Name: AMIProjectAMIID
+        - Name: Test
+          Actions:
+            - Name: TestAMI
+              RunOrder: 1
+              ActionTypeId:
+                Category: Test
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref TestAMIProject
+              InputArtifacts:
+                - Name: AMIProjectAMIID
         # - Name: Publish
         #   Actions:
         #     - Name: PublishAMI
