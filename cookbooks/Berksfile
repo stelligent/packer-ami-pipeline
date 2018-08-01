@@ -1,2 +1,0 @@
-source 'https://supermarket.chef.io'
-cookbook 'nginx', '~> 8.1.5'

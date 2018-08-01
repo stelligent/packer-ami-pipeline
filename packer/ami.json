@@ -36,14 +36,8 @@
         "cookbooks"
       ],
       "run_list": [
-        "build-essential",
-        "ohai",
-        "yum-epel",
-        "zypper",
-        "nginx::default"
-      ],
-      "prevent_sudo": false,
-      "skip_install": false
+        "nginx"
+      ]
     }
   ],
 
