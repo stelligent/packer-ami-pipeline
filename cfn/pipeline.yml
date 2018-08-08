@@ -199,7 +199,7 @@ Resources:
                 ActionMode: "CREATE_UPDATE"
                 StackName: "AMIPipelineTestInstance"
                 TemplatePath: "AMIProjectAMIID::test/test-instance.yml"
-                TemplateConfiguration: "AMIProjectAMIID::test/test-instance-conf.json"
+                TemplateConfiguration: "AMIProjectAMIID::test/test-instance-config.json"
                 RoleArn: !GetAtt CodePipelineRole.Arn
                 OutputFileName: "TestInstanceOutput.json"
               InputArtifacts:
