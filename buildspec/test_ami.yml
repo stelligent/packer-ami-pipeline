@@ -8,9 +8,7 @@ phases:
       - apt-get -y install build-essential ruby-dev git curl build-essential libxml2-dev libxslt-dev libssl-dev autoconf jq
       - curl -L https://www.opscode.com/chef/install.sh | bash
       - /opt/chef/embedded/bin/gem install berkshelf --no-ri --no-rdoc
-      - /opt/chef/embedded/bin/gem install inspec --no-ri --no-rdoc
       - ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
-      - ln -s /opt/chef/embedded/bin/inspec /usr/local/bin/inspec
   build:
     commands:
       - aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output text --query 'Stacks[0].Outputs[*].OutputValue'
