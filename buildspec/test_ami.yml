@@ -11,4 +11,7 @@ phases:
       - ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
   build:
     commands:
-      - aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output text --query 'Stacks[0].Outputs[*].OutputValue'
+      - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
+      - TestInstanceId=$(echo $OUTPUTS | jq '.TestInstanceId')
+      - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
+      - inspec

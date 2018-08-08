@@ -87,6 +87,7 @@ Resources:
                 Action:
                   - "ssm:*"
                   - "ec2:*"
+                  - "cloudformation:DescribeStacks"
                   - "codepipeline:PutJobSuccessResult"
                   - "codepipeline:PutJobFailureResult"
                 Resource: "*"
