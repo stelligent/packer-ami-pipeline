@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # Generate test-instance-config.json from Packer outputs
 
 ARTIFACT_ID=$(cat manifest.json | jq '.builds[0].artifact_id')
