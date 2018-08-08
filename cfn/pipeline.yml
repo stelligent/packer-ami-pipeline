@@ -46,7 +46,9 @@ Resources:
         Statement:
           Effect: Allow
           Principal:
-            Service: codepipeline.amazonaws.com
+            Service: 
+              - codepipeline.amazonaws.com
+              - cloudformation.amazonaws.com
           Action: sts:AssumeRole
       Path: /
       Policies:
@@ -61,7 +63,8 @@ Resources:
                   - "codebuild:*"
                   - "cloudformation:*"
                   - "ec2:*"
-                Resource: "*"
+                  - "iam:PassRole"
+                Resource: "*" 
   CodeBuildRole:
     Type: AWS::IAM::Role
     Properties:
@@ -216,7 +219,7 @@ Resources:
               Configuration:
                 ProjectName: !Ref TestAMIProject
               InputArtifacts:
-                - Name: AMIProjectInstanceOutput
+                - Name: AMIProjectAMIID
         # - Name: Publish
         #   Actions:
         #     - Name: PublishAMI

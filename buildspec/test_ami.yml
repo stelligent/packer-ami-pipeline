@@ -13,5 +13,4 @@ phases:
       - ln -s /opt/chef/embedded/bin/inspec /usr/local/bin/inspec
   build:
     commands:
-      - cat manifest.json
-      - cat TestInstanceOutput.json
+      - aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output text --query 'Stacks[0].Outputs[*].OutputValue'
