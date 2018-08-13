@@ -14,4 +14,4 @@ phases:
       - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
       - TestInstanceId=$(echo $OUTPUTS | jq '.TestInstanceId')
       - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
-      - inspec
+      - /opt/chef/embedded/bin/inspec
