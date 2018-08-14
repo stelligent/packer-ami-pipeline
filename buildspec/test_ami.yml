@@ -15,4 +15,4 @@ phases:
       - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
       - AmiId=$(cat test/test-instance-config.json | jq '.AmiId')
       - KeyName=$(cat test/test-instance-config.json | jq '.KeyName')
-      - inspec exec test/inspec/test.rb -t ssh://ec2-user@$TestInstanceIpAddress -i $KeyName --sudo
+      - inspec exec test/inspec/test.rb -t "ssh://ec2-user@$TestInstanceIpAddress" -i "$KeyName" --sudo
