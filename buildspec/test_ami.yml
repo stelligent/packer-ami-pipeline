@@ -5,10 +5,9 @@ phases:
     commands:
       - echo Installing pre-reqs
       - apt-get -y update
-      - apt-get -y install build-essential ruby-dev git curl build-essential libxml2-dev libxslt-dev libssl-dev autoconf jq
-      - curl -L https://www.opscode.com/chef/install.sh | bash
-      - /opt/chef/embedded/bin/gem install berkshelf --no-ri --no-rdoc
-      - ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
+      - apt-get -y install build-essential ruby-dev git curl build-essential libxml2-dev libxslt-dev libssl-dev autoconf jq wget
+      - wget https://packages.chef.io/files/stable/chefdk/3.1.0/ubuntu/14.04/chefdk_3.1.0-1_amd64.deb
+      - dpkg -i chefdk_3.1.0-1_amd64.deb
   build:
     commands:
       - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
@@ -16,5 +15,4 @@ phases:
       - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
       - AmiId=$(cat test/test-instance-config.json | jq '.AmiId')
       - KeyName=$(cat test/test-instance-config.json | jq '.KeyName')
-      - /opt/chef/embedded/bin/inspec --version
-      # - /opt/chef/embedded/bin/inspec exec test/inspec/test.rb -t ssh://ec2-user@${TestInstanceIpAddress} -i ${KeyName} --sudo
+      - inspec exec test/inspec/test.rb -t ssh://ec2-user@${TestInstanceIpAddress} -i ${KeyName} --sudo
