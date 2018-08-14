@@ -16,4 +16,5 @@ phases:
       - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
       - AmiId=$(cat test/test-instance-config.json | jq '.AmiId')
       - KeyName=$(cat test/test-instance-config.json | jq '.KeyName')
-      - /opt/chef/embedded/bin/inspec exec test/inspec/test.rb -t ssh://ec2-user@${TestInstanceIpAddress} -i ${KeyName} --sudo
+      - /opt/chef/embedded/bin/inspec --version
+      # - /opt/chef/embedded/bin/inspec exec test/inspec/test.rb -t ssh://ec2-user@${TestInstanceIpAddress} -i ${KeyName} --sudo
