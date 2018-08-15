@@ -11,14 +11,14 @@ phases:
   build:
     commands:
       - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
-      - echo "$OUTPUTS"
+      - echo $OUTPUTS
       - TestInstanceId=$(echo $OUTPUTS | jq '.TestInstanceId')
-      - echo "$TestInstanceId"
+      - echo $TestInstanceId
       - TestInstanceIPAddress=$(echo $OUTPUTS | jq '.TestInstanceIPAddress')
-      - echo "$TestInstanceIPAddress"
+      - echo $TestInstanceIPAddress
       - cat test/test-instance-config.json
       - AmiId=$(cat test/test-instance-config.json | jq '.Parameters.AmiId')
-      - echo "$AmiId"
+      - echo $AmiId
       - KeyName=$(cat test/test-instance-config.json | jq '.Parameters.KeyName')
-      - echo "$KeyName"
-      - inspec exec test/inspec/test.rb -b ssh --host "$TestInstanceIpAddress" --user ec2-user -i "$KeyName" --sudo
+      - echo $KeyName
+      - inspec exec test/inspec/test.rb -b ssh --host $TestInstanceIpAddress --user ec2-user -i $KeyName --sudo
