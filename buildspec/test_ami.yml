@@ -11,15 +11,11 @@ phases:
       - chef gem update
   build:
     commands:
+      - export PATH=$PATH:/root/.chefdk/gem/ruby/2.5.0/bin
+      - which inspec
       - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
-      - echo $OUTPUTS
       - TestInstanceId=$(echo $OUTPUTS | jq -r '.TestInstanceId')
-      - echo $TestInstanceId
       - TestInstanceDnsName=$(echo $OUTPUTS | jq -r '.TestInstanceDnsName')
-      - echo $TestInstanceDnsName
-      - cat test/test-instance-config.json
       - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')
-      - echo $AmiId
       - KeyName=$(cat test/test-instance-config.json | jq -r '.Parameters.KeyName')
-      - echo $KeyName
       - inspec exec test/inspec/test.rb -b ssh --host $TestInstanceDnsName --user ec2-user -i "${KeyName}.pem" --sudo
