@@ -48,5 +48,5 @@ Resources:
 Outputs:
   TestInstanceId:
     Value: !Ref TestInstance
-  TestInstanceIPAddress:
-    Value: !GetAtt TestInstance.PublicIp
+  TestInstanceDnsName:
+    Value: !GetAtt TestInstance.PublicDnsName
