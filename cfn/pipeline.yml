@@ -221,16 +221,27 @@ Resources:
                 ProjectName: !Ref TestAMIProject
               InputArtifacts:
                 - Name: AMIProjectAMIID
-        # - Name: Publish
-        #   Actions:
-        #     - Name: PublishAMI
-        #       RunOrder: 1
-        #       ActionTypeId:
-        #         Category: Publish
-        #         Owner: AWS
-        #         Version: 1
-        #         Provider: CodeBuild
-        #       Configuration:
-        #         ProjectName: !Ref PublishAMIProject
-        #       InputArtifacts:
-        #         - Name: AMIProjectAMIID
+            - Name: RemoveTestInstance
+              RunOrder: 3
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                ActionMode: "DELETE"
+                StackName: "AMIPipelineTestInstance"
+                RoleArn: !GetAtt CodePipelineRole.Arn
+        - Name: Publish
+          Actions:
+            - Name: PublishAMI
+              RunOrder: 1
+              ActionTypeId:
+                Category: Publish
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: !Ref PublishAMIProject
+              InputArtifacts:
+                - Name: AMIProjectAMIID

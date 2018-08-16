@@ -11,8 +11,6 @@ phases:
       - chef gem update
   build:
     commands:
-      - export PATH=$PATH:/root/.chefdk/gem/ruby/2.5.0/bin
-      - which inspec
       - OUTPUTS=$(aws cloudformation describe-stacks --stack-name AMIPipelineTestInstance --output json --region us-east-1 | jq 'reduce .Stacks[0].Outputs[] as $item ({}; . + {"\($item.OutputKey)":$item.OutputValue})')
       - TestInstanceId=$(echo $OUTPUTS | jq -r '.TestInstanceId')
       - TestInstanceDnsName=$(echo $OUTPUTS | jq -r '.TestInstanceDnsName')

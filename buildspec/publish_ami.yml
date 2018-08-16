@@ -1,0 +1,7 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')
+      - aws ssm put-parameter --name "/jim/packer_ami_pipeline/LatestAMI" --value $AmiId --type String
