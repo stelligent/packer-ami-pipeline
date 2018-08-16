@@ -18,4 +18,4 @@ phases:
       - TestInstanceDnsName=$(echo $OUTPUTS | jq -r '.TestInstanceDnsName')
       - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')
       - KeyName=$(cat test/test-instance-config.json | jq -r '.Parameters.KeyName')
-      - inspec exec test/inspec/test.rb -b ssh --host $TestInstanceDnsName --user ec2-user -i "${KeyName}.pem" --sudo
+      - /root/.chefdk/gem/ruby/2.5.0/bin/inspec exec test/inspec/test.rb -b ssh --host $TestInstanceDnsName --user ec2-user -i "${KeyName}.pem" --sudo
