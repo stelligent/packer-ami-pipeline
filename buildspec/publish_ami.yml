@@ -1,6 +1,10 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - apt-get update -y
+      - apt-get install jq
   build:
     commands:
       - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')

@@ -141,6 +141,21 @@ Resources:
         BuildSpec: buildspec/test_ami.yml
         Type: CODEPIPELINE
       TimeoutInMinutes: 30
+  PublishAMIProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Description: Codebuild project Publish AMI
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/python:3.6.5
+      Source:
+        BuildSpec: buildspec/publish_ami.yml
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
   AMIPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -229,7 +244,7 @@ Resources:
                 Version: 1
                 Provider: CloudFormation
               Configuration:
-                ActionMode: "DELETE"
+                ActionMode: "DELETE_ONLY"
                 StackName: "AMIPipelineTestInstance"
                 RoleArn: !GetAtt CodePipelineRole.Arn
         - Name: Publish
@@ -237,7 +252,7 @@ Resources:
             - Name: PublishAMI
               RunOrder: 1
               ActionTypeId:
-                Category: Publish
+                Category: Build
                 Owner: AWS
                 Version: 1
                 Provider: CodeBuild
