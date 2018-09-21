@@ -27,3 +27,12 @@ The pipeline accomplishes this by running the following tasks:
     * `test/inspec/test.rb`
 6. Delete the test instance
 7. Publish the AMI by saving the AMI ID in an [SSM Parameter](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) called `/packerdemo/packer_ami_pipeline/LatestAMI`
+
+# Structure
+* `buildscripts/` Scripts used to configure test instance
+* `buildspec/` CodeBuild BuildSpec YML files
+* `cfn/` CloudFormation templates
+* `cookbooks/` Chef Cookbooks used to configure Image
+* `packer/` Packer templates and parameter files
+* `test/` InSpec tests
+
