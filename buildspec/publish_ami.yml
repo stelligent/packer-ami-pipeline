@@ -8,5 +8,5 @@ phases:
       - apt-get install jq
   build:
     commands:
-      - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')
+      - AmiId=$(cat cfn/test-instance-config.json | jq -r '.Parameters.AmiId')
       - aws ssm put-parameter --name "/packerdemo/packer_ami_pipeline/LatestAMI" --value $AmiId --type String --overwrite

@@ -22,7 +22,7 @@ The pipeline accomplishes this by running the following tasks:
     * `packer/ami_params.json`
     * `cookbooks/nginx`
 4. Launch a test instance with the newly built AMI 
-    * `test/test-instance.yml`
+    * `cfn/test-instance.yml`
 5. Test the AMI using InSpec
     * `test/inspec/test.rb`
 6. Delete the test instance
