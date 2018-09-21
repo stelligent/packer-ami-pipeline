@@ -15,7 +15,7 @@ phases:
   build:
     commands:
       - echo Building AMI
-      - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_SOURCE_VERSION} packer/ami.json
+      - packer build -var-file=packer/ami_params.json -var git_hash=${CODEBUILD_RESOLVED_SOURCE_VERSION} packer/ami.json
       - echo Creating Test Instance Configuration
       - cat manifest.json
       - chmod +x buildscripts/generate_instance_config.sh
