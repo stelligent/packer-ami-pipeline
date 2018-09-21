@@ -2,6 +2,7 @@
   "variables": {
     "region": "",
     "source_ami": "",
+    "ssh_username": "",
     "vpc_id": "",
     "subnet_id": "",
     "kms_key_id": "",
@@ -14,7 +15,7 @@
       "region": "{{user `region`}}",
       "source_ami": "{{user `source_ami`}}",
       "instance_type": "t2.micro",
-      "ssh_username": "ec2-user",
+      "ssh_username": "{{user `ssh_username`}}",
       "ami_name": "AMZN-Linux-NGINX-{{timestamp}}",
       "ami_description": "Simple Amazon Linux instance with NGINX installed",
       "vpc_id": "{{user `vpc_id`}}",
