@@ -1,4 +1,5 @@
 version: 0.2
+# Publish AMI ID to SSM Parameter Store
 
 phases:
   install:
@@ -8,4 +9,4 @@ phases:
   build:
     commands:
       - AmiId=$(cat test/test-instance-config.json | jq -r '.Parameters.AmiId')
-      - aws ssm put-parameter --name "/jim/packer_ami_pipeline/LatestAMI" --value $AmiId --type String --overwrite
+      - aws ssm put-parameter --name "/packerdemo/packer_ami_pipeline/LatestAMI" --value $AmiId --type String --overwrite

@@ -1,5 +1,6 @@
 #!/bin/bash
-# Generate test-instance-config.json from Packer outputs
+# Creates an EC2 Key Pair for SSH access
+# Generates test-instance-config.json from Packer outputs
 
 ARTIFACT_ID=$(cat manifest.json | jq '.builds[0].artifact_id')
 IFS=":" read REGION AMI_ID <<< $(sed -e 's/^"//' -e 's/"$//' <<< $ARTIFACT_ID)
